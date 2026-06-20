@@ -1,32 +1,46 @@
+import { useState } from "react";
+
 import "./App.css";
 
+import SearchBar from "./components/SearchBar";
+import WeatherCard from "./components/WeatherCard";
+import WeatherDetails from "./components/WeatherDetails";
+import Forecast from "./components/Forecast";
+
 function App() {
+
+  const [darkMode, setDarkMode] = useState(false);
+
   return (
-    <div className="app">
-      <div className="weather-card">
-        <h1>AI Weather Prediction</h1>
+    <div className={darkMode ? "app dark" : "app"}>
 
-        <h2>Pune</h2>
+      <div className="navbar">
+        <h1 className="logo">
+          
+        </h1>
 
-        <div className="temperature">31°C</div>
+        <button
+          className="theme-btn"
+          onClick={() => setDarkMode(!darkMode)}
+        >
+          {darkMode ? "☀️" : "🌙"}
+        </button>
+      </div>
 
-        <p className="condition">Clear Sky</p>
+      <div className="dashboard">
 
-        <div className="details">
-          <p>
-            <span>Humidity</span>
-            <span>70%</span>
-          </p>
-          <p>
-            <span>Wind Speed</span>
-            <span>1012 hPa</span>
-          </p>
-          <p>
-            <span>Wind speed</span>
-            <span>12km/h</span>
-          </p>
+        <h1 className="title">
+          AI Weather Prediction
+        </h1>
 
-        </div>
+        <SearchBar />
+
+        <WeatherCard />
+
+        <WeatherDetails />
+
+        <Forecast />
+
       </div>
     </div>
   );
