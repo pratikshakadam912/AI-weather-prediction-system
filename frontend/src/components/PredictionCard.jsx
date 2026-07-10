@@ -11,12 +11,16 @@ import { WeatherContext } from "../context/WeatherContext";
 import predictBg from "../assets/predict.jpg";
 
 function PredictionCard() {
-    const { weather } = useContext(WeatherContext);
+
+    const { weather, theme } = useContext(WeatherContext);
+
+    const isDark = theme === "dark";
 
     if (!weather) return null;
 
     // Temporary values until AI model is ready
     const confidence = 94;
+
     const rainChance =
         weather.condition === "Rain"
             ? 90
@@ -32,7 +36,24 @@ function PredictionCard() {
                 : "Clear weather expected. Great day for outdoor activities.";
 
     return (
-        <div className="relative bg-slate-900 border border-slate-800 rounded-3xl shadow-xl overflow-hidden hover:shadow-violet-500/20 transition-all duration-300 h-full flex flex-col">
+
+        <div
+            className={`
+                relative
+                rounded-3xl
+                overflow-hidden
+                h-full
+                flex
+                flex-col
+                transition-all
+                duration-500
+
+                ${isDark
+                    ? "bg-slate-900 border border-slate-800 hover:shadow-violet-500/20"
+                    : "bg-white/80 border border-pink-100 shadow-lg hover:shadow-pink-200"
+                }
+            `}
+        >
 
             {/* Background */}
 
@@ -42,7 +63,12 @@ function PredictionCard() {
                 className="absolute right-[-40px] top-0 h-full w-56 object-cover opacity-40 pointer-events-none select-none"
             />
 
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/95 to-slate-900/70"></div>
+            <div
+                className={`absolute inset-0 ${isDark
+                        ? "bg-gradient-to-r from-slate-900 via-slate-900/95 to-slate-900/70"
+                        : "bg-gradient-to-r from-white/80 via-white/60 to-pink-50/40"
+                    }`}
+            ></div>
 
             <div className="relative z-10 flex flex-col h-full">
 
@@ -54,23 +80,58 @@ function PredictionCard() {
 
                         <div className="flex items-center gap-4">
 
-                            <div className="w-14 h-14 rounded-2xl bg-violet-500/15 border border-violet-400/20 backdrop-blur-md flex items-center justify-center">
+                            <div
+                                className={`
+                                    w-14
+                                    h-14
+                                    rounded-2xl
+                                    backdrop-blur-md
+                                    flex
+                                    items-center
+                                    justify-center
 
-                                <FaRobot className="text-2xl text-violet-300" />
+                                    ${isDark
+                                        ? "bg-violet-500/15 border border-violet-400/20"
+                                        : "bg-pink-100 border border-pink-200"
+                                    }
+                                `}
+                            >
+
+                                <FaRobot
+                                    className={`text-2xl ${isDark
+                                            ? "text-violet-300"
+                                            : "text-pink-500"
+                                        }`}
+                                />
 
                             </div>
 
                             <div>
 
-                                <span className="text-violet-300 text-sm font-medium tracking-wide uppercase">
+                                <span
+                                    className={`text-sm font-medium tracking-wide uppercase ${isDark
+                                            ? "text-violet-300"
+                                            : "text-pink-600"
+                                        }`}
+                                >
                                     AI Powered
                                 </span>
 
-                                <h2 className="text-2xl font-bold text-white mt-1">
+                                <h2
+                                    className={`text-2xl font-bold mt-1 ${isDark
+                                            ? "text-white"
+                                            : "text-slate-800"
+                                        }`}
+                                >
                                     Weather Prediction
                                 </h2>
 
-                                <p className="text-slate-400 text-sm mt-1">
+                                <p
+                                    className={`text-sm mt-1 ${isDark
+                                            ? "text-slate-400"
+                                            : "text-slate-500"
+                                        }`}
+                                >
                                     Tomorrow's Forecast
                                 </p>
 
@@ -78,9 +139,25 @@ function PredictionCard() {
 
                         </div>
 
-                        <div className="px-3 py-1.5 rounded-full bg-violet-500/15 border border-violet-400/20">
+                        <div
+                            className={`
+                                px-3
+                                py-1.5
+                                rounded-full
 
-                            <span className="text-violet-300 text-sm font-medium">
+                                ${isDark
+                                    ? "bg-violet-500/15 border border-violet-400/20"
+                                    : "bg-pink-100 border border-pink-200"
+                                }
+                            `}
+                        >
+
+                            <span
+                                className={`text-sm font-medium ${isDark
+                                        ? "text-violet-300"
+                                        : "text-pink-600"
+                                    }`}
+                            >
                                 +1 Day
                             </span>
 
@@ -96,23 +173,58 @@ function PredictionCard() {
 
                     <div>
 
-                        <h1 className="text-7xl font-bold text-white leading-none">
+                        <h1
+                            className={`text-7xl font-bold leading-none ${isDark
+                                    ? "text-white"
+                                    : "text-slate-800"
+                                }`}
+                        >
                             {weather.temperature}°
                         </h1>
 
-                        <p className="text-3xl font-semibold text-white mt-2 capitalize">
+                        <p
+                            className={`text-3xl font-semibold mt-2 capitalize ${isDark
+                                    ? "text-white"
+                                    : "text-slate-700"
+                                }`}
+                        >
                             {weather.description}
                         </p>
 
-                        <p className="text-slate-400 mt-2">
+                        <p
+                            className={`mt-2 ${isDark
+                                    ? "text-slate-400"
+                                    : "text-slate-500"
+                                }`}
+                        >
                             Feels like {weather.feels_like}° • Humidity {weather.humidity}%
                         </p>
 
-                        <div className="inline-flex items-center gap-2 bg-green-500/20 backdrop-blur-sm px-4 py-2 rounded-full mt-5">
+                        <div
+                            className={`
+                                inline-flex
+                                items-center
+                                gap-2
+                                px-4
+                                py-2
+                                rounded-full
+                                mt-5
 
-                            <FaCircleCheck className="text-green-400" />
+                                ${isDark
+                                    ? "bg-green-500/20"
+                                    : "bg-green-100"
+                                }
+                            `}
+                        >
 
-                            <span className="text-green-300 font-medium">
+                            <FaCircleCheck className="text-green-500" />
+
+                            <span
+                                className={`font-medium ${isDark
+                                        ? "text-green-300"
+                                        : "text-green-700"
+                                    }`}
+                            >
                                 {confidence}% Confidence
                             </span>
 
@@ -122,15 +234,13 @@ function PredictionCard() {
 
                     {/* Prediction Details */}
 
-                    <div className="space-y-6 mt-10">
-
-                        <PredictionItem
-                            icon={<FaTemperatureHigh className="text-orange-400" />}
-                            title="Temperature"
-                            value={`${weather.temperature}°C`}
-                            progress={Math.min(weather.temperature * 3, 100)}
-                            color="bg-orange-400"
-                        />
+                    <div className="space-y-6 mt-10">                         <PredictionItem
+                        icon={<FaTemperatureHigh className="text-orange-400" />}
+                        title="Temperature"
+                        value={`${weather.temperature}°C`}
+                        progress={Math.min(weather.temperature * 3, 100)}
+                        color="bg-orange-400"
+                    />
 
                         <PredictionItem
                             icon={<FaCloudRain className="text-blue-400" />}
@@ -152,13 +262,37 @@ function PredictionCard() {
 
                     {/* AI Recommendation */}
 
-                    <div className="mt-8 rounded-2xl bg-slate-800/70 backdrop-blur-md border border-white/10 p-5">
+                    <div
+                        className={`
+                            mt-8
+                            rounded-2xl
+                            backdrop-blur-md
+                            p-5
+                            transition-all
+                            duration-500
 
-                        <h3 className="text-lg font-semibold text-white mb-3">
+                            ${isDark
+                                ? "bg-slate-800/70 border border-white/10"
+                                : "bg-white border border-pink-100 shadow-sm"
+                            }
+                        `}
+                    >
+
+                        <h3
+                            className={`text-lg font-semibold mb-3 ${isDark
+                                    ? "text-white"
+                                    : "text-slate-800"
+                                }`}
+                        >
                             🤖 AI Recommendation
                         </h3>
 
-                        <p className="text-slate-300 leading-7">
+                        <p
+                            className={`leading-7 ${isDark
+                                    ? "text-slate-300"
+                                    : "text-slate-600"
+                                }`}
+                        >
                             {recommendation}
                         </p>
 
@@ -179,7 +313,13 @@ function PredictionItem({
     progress,
     color,
 }) {
+
+    const { theme } = useContext(WeatherContext);
+
+    const isDark = theme === "dark";
+
     return (
+
         <div>
 
             <div className="flex justify-between items-center mb-2">
@@ -188,19 +328,41 @@ function PredictionItem({
 
                     {icon}
 
-                    <span className="text-white">
+                    <span
+                        className={`${isDark
+                                ? "text-white"
+                                : "text-slate-800"
+                            }`}
+                    >
                         {title}
                     </span>
 
                 </div>
 
-                <span className="text-slate-300 font-semibold">
+                <span
+                    className={`font-semibold ${isDark
+                            ? "text-slate-300"
+                            : "text-slate-600"
+                        }`}
+                >
                     {value}
                 </span>
 
             </div>
 
-            <div className="w-full h-2 rounded-full bg-slate-700 overflow-hidden">
+            <div
+                className={`
+                    w-full
+                    h-2
+                    rounded-full
+                    overflow-hidden
+
+                    ${isDark
+                        ? "bg-slate-700"
+                        : "bg-slate-200"
+                    }
+                `}
+            >
 
                 <div
                     className={`h-full ${color} rounded-full`}
@@ -210,6 +372,7 @@ function PredictionItem({
             </div>
 
         </div>
+
     );
 }
 

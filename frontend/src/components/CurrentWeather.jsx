@@ -12,12 +12,28 @@ import { WeatherContext } from "../context/WeatherContext";
 import skyBg from "../assets/sky-bg.jpg";
 
 function CurrentWeather() {
-    const { weather } = useContext(WeatherContext);
+
+    const { weather, theme } = useContext(WeatherContext);
+
+    const isDark = theme === "dark";
 
     if (!weather) return null;
 
     return (
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl shadow-xl overflow-hidden hover:shadow-cyan-500/20 transition-all duration-300">
+        <div
+            className={`
+                rounded-3xl
+                shadow-xl
+                overflow-hidden
+                transition-all
+                duration-500
+
+                ${isDark
+                    ? "bg-slate-900 border border-slate-800 hover:shadow-cyan-500/20"
+                    : "bg-white/80 border border-pink-100 shadow-lg hover:shadow-pink-200"
+                }
+            `}
+        >
 
             <div
                 className="relative p-8 bg-cover bg-center bg-no-repeat"
@@ -25,7 +41,12 @@ function CurrentWeather() {
                     backgroundImage: `url(${skyBg})`,
                 }}
             >
-                <div className="absolute inset-0 bg-slate-900/35"></div>
+                <div
+                    className={`absolute inset-0 ${isDark
+                            ? "bg-slate-900/35"
+                            : "bg-white/20"
+                        }`}
+                ></div>
 
                 <div className="relative">
 
@@ -37,21 +58,49 @@ function CurrentWeather() {
 
                             <div className="flex items-center gap-2">
 
-                                <FaLocationDot className="text-white text-lg" />
+                                <FaLocationDot
+                                    className={`text-lg ${isDark
+                                            ? "text-white"
+                                            : "text-pink-600"
+                                        }`}
+                                />
 
-                                <h2 className="text-2xl font-bold text-white">
+                                <h2
+                                    className={`text-2xl font-bold ${isDark
+                                            ? "text-white"
+                                            : "text-slate-800"
+                                        }`}
+                                >
                                     {weather.city}, {weather.country}
                                 </h2>
 
                             </div>
 
-                            <p className="text-slate-200 mt-2">
+                            <p
+                                className={`mt-2 ${isDark
+                                        ? "text-slate-200"
+                                        : "text-slate-700"
+                                    }`}
+                            >
                                 Live Weather
                             </p>
 
                         </div>
 
-                        <span className="px-4 py-2 rounded-full bg-white/15 text-sm text-white backdrop-blur-sm">
+                        <span
+                            className={`
+                                px-4
+                                py-2
+                                rounded-full
+                                text-sm
+                                backdrop-blur-sm
+
+                                ${isDark
+                                    ? "bg-white/15 text-white"
+                                    : "bg-pink-100 text-pink-700"
+                                }
+                            `}
+                        >
                             Live
                         </span>
 
@@ -61,21 +110,52 @@ function CurrentWeather() {
 
                     <div className="mt-10 flex flex-col items-center text-center">
 
-                        <div className="w-28 h-28 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center shadow-lg">
+                        <div
+                            className={`
+                                w-28
+                                h-28
+                                rounded-full
+                                backdrop-blur-md
+                                flex
+                                items-center
+                                justify-center
+                                shadow-lg
+
+                                ${isDark
+                                    ? "bg-white/10"
+                                    : "bg-white/70"
+                                }
+                            `}
+                        >
 
                             <WiDaySunny className="text-yellow-300 text-7xl drop-shadow-xl" />
 
                         </div>
 
-                        <h1 className="text-6xl font-bold text-white mt-6">
+                        <h1
+                            className={`text-6xl font-bold mt-6 ${isDark
+                                    ? "text-white"
+                                    : "text-slate-800"
+                                }`}
+                        >
                             {weather.temperature}°
                         </h1>
 
-                        <p className="text-2xl text-white mt-2 capitalize">
+                        <p
+                            className={`text-2xl mt-2 capitalize ${isDark
+                                    ? "text-white"
+                                    : "text-slate-700"
+                                }`}
+                        >
                             {weather.description}
                         </p>
 
-                        <p className="text-slate-200 mt-2">
+                        <p
+                            className={`mt-2 ${isDark
+                                    ? "text-slate-200"
+                                    : "text-slate-600"
+                                }`}
+                        >
                             Feels Like {weather.feels_like}°
                         </p>
 
@@ -85,7 +165,20 @@ function CurrentWeather() {
 
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-slate-900">
+            <div
+                className={`
+                    grid
+                    grid-cols-2
+                    md:grid-cols-4
+                    gap-4
+                    p-6
+
+                    ${isDark
+                        ? "bg-slate-900"
+                        : "bg-white"
+                    }
+                `}
+            >
 
                 <WeatherStat
                     icon={<FaArrowUp />}
@@ -122,18 +215,46 @@ function CurrentWeather() {
 }
 
 function WeatherStat({ icon, title, value, color }) {
+
+    const { theme } = useContext(WeatherContext);
+
+    const isDark = theme === "dark";
+
     return (
-        <div className="bg-slate-800 rounded-2xl p-5 text-center hover:bg-slate-700 transition-all duration-300">
+        <div
+            className={`
+                rounded-2xl
+                p-5
+                text-center
+                transition-all
+                duration-300
+
+                ${isDark
+                    ? "bg-slate-800 hover:bg-slate-700"
+                    : "bg-slate-50 hover:bg-pink-50 border border-slate-200"
+                }
+            `}
+        >
 
             <div className={`text-2xl flex justify-center ${color}`}>
                 {icon}
             </div>
 
-            <p className="text-slate-300 text-sm mt-3">
+            <p
+                className={`text-sm mt-3 ${isDark
+                        ? "text-slate-300"
+                        : "text-slate-500"
+                    }`}
+            >
                 {title}
             </p>
 
-            <h3 className="text-white text-2xl font-bold mt-2">
+            <h3
+                className={`text-2xl font-bold mt-2 ${isDark
+                        ? "text-white"
+                        : "text-slate-800"
+                    }`}
+            >
                 {value}
             </h3>
 

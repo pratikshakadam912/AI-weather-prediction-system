@@ -11,7 +11,6 @@ import { WeatherContext } from "../context/WeatherContext";
 import { getWeatherByLocation } from "../api/weatherApi";
 
 function Header() {
-
     const today = new Date();
 
     const currentDate = today.toLocaleDateString("en-US", {
@@ -37,10 +36,11 @@ function Header() {
         setTheme,
     } = useContext(WeatherContext);
 
-    const toggleTheme = () => {
-        setTheme(theme === "dark" ? "light" : "dark");
-    };
+    const isDark = theme === "dark";
 
+    const toggleTheme = () => {
+        setTheme(isDark ? "light" : "dark");
+    };
 
     const handleCurrentLocation = () => {
         if (!navigator.geolocation) {
@@ -80,41 +80,61 @@ function Header() {
     else if (hour >= 17) greeting = "Good Evening";
 
     return (
-
-        <header className="flex justify-between items-center mb-10">
-
+        <header
+            className={`
+                flex justify-between items-center mb-10
+                transition-all duration-500
+                ${isDark
+                    ? ""
+                    : "bg-white/40 backdrop-blur-xl rounded-3xl p-6 border border-pink-100 shadow-lg"
+                }
+            `}
+        >
             {/* ================= Left ================= */}
 
             <div>
+                <div
+                    className={`
+                        inline-flex items-center gap-2 px-4 py-2 rounded-full border
+                        ${isDark
+                            ? "bg-cyan-500/10 border-cyan-500/20"
+                            : "bg-gradient-to-r from-pink-100 to-blue-100 border-pink-200"
+                        }
+                    `}
+                >
+                    <span
+                        className={`w-2 h-2 rounded-full animate-pulse ${isDark ? "bg-cyan-400" : "bg-pink-500"
+                            }`}
+                    ></span>
 
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-
-                    <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
-
-                    <span className="text-cyan-300 text-sm font-medium">
+                    <span
+                        className={`text-sm font-medium ${isDark ? "text-cyan-300" : "text-pink-600"
+                            }`}
+                    >
                         AI Weather Assistant
                     </span>
-
                 </div>
 
-                <h1 className="text-5xl font-bold text-white mt-5 tracking-tight">
-
+                <h1
+                    className={`text-5xl font-bold mt-5 tracking-tight ${isDark ? "text-white" : "text-slate-800"
+                        }`}
+                >
                     {greeting},
-
                 </h1>
 
-                <h2 className="text-4xl font-semibold text-slate-200 mt-1">
-
+                <h2
+                    className={`text-4xl font-semibold mt-1 ${isDark ? "text-slate-200" : "text-slate-700"
+                        }`}
+                >
                     Welcome Back 👋
-
                 </h2>
 
-                <p className="text-slate-400 mt-4 text-lg">
-
+                <p
+                    className={`mt-4 text-lg ${isDark ? "text-slate-400" : "text-slate-500"
+                        }`}
+                >
                     Live weather insights & AI-powered forecasting.
-
                 </p>
-
             </div>
 
             {/* ================= Right ================= */}
@@ -123,34 +143,59 @@ function Header() {
 
                 {/* Date & Time */}
 
-                <div className="rounded-3xl bg-slate-900/90 border border-white/10 backdrop-blur-xl px-6 py-5 min-w-[260px]">
-
+                <div
+                    className={`
+                        rounded-3xl
+                        backdrop-blur-xl
+                        px-6
+                        py-5
+                        min-w-[260px]
+                        transition-all
+                        duration-500
+                        ${isDark
+                            ? "bg-slate-900/90 border border-white/10"
+                            : "bg-white/80 border border-pink-100 shadow-md"
+                        }
+                    `}
+                >
                     <div className="flex items-center gap-3">
-
-                        <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 flex items-center justify-center">
-
-                            <FaClock className="text-cyan-400" />
-
+                        <div
+                            className={`
+                                w-12 h-12 rounded-2xl flex items-center justify-center
+                                ${isDark
+                                    ? "bg-cyan-500/15"
+                                    : "bg-pink-100"
+                                }
+                            `}
+                        >
+                            <FaClock
+                                className={`${isDark
+                                        ? "text-cyan-400"
+                                        : "text-pink-500"
+                                    }`}
+                            />
                         </div>
 
                         <div>
-
-                            <p className="text-white font-semibold">
-
+                            <p
+                                className={`font-semibold ${isDark
+                                        ? "text-white"
+                                        : "text-slate-800"
+                                    }`}
+                            >
                                 {currentTime}
-
                             </p>
 
-                            <p className="text-slate-400 text-sm">
-
+                            <p
+                                className={`text-sm ${isDark
+                                        ? "text-slate-400"
+                                        : "text-slate-500"
+                                    }`}
+                            >
                                 {currentDate}
-
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
 
                 {/* Location */}
@@ -158,37 +203,60 @@ function Header() {
                 <button
                     onClick={handleCurrentLocation}
                     disabled={loading}
-                    className="
-        rounded-3xl
-        bg-slate-900/90
-        border border-white/10
-        backdrop-blur-xl
-        px-6
-        py-5
-        hover:border-cyan-400/40
-        transition-all
-        duration-300
-        disabled:opacity-50
-    "
+                    className={`
+                        rounded-3xl
+                        backdrop-blur-xl
+                        px-6
+                        py-5
+                        transition-all
+                        duration-300
+                        disabled:opacity-50
+                        ${isDark
+                            ? "bg-slate-900/90 border border-white/10 hover:border-cyan-400/40"
+                            : "bg-white/80 border border-blue-100 shadow-md hover:border-blue-300"
+                        }
+                    `}
                 >
-
                     <div className="flex items-center gap-4">
 
-                        <div className="w-12 h-12 rounded-2xl bg-cyan-500/15 flex items-center justify-center">
-
-                            <FaLocationCrosshairs className="text-cyan-400" />
-
+                        <div
+                            className={`
+                                w-12 h-12
+                                rounded-2xl
+                                flex
+                                items-center
+                                justify-center
+                                ${isDark
+                                    ? "bg-cyan-500/15"
+                                    : "bg-blue-100"
+                                }
+                            `}
+                        >
+                            <FaLocationCrosshairs
+                                className={`${isDark
+                                        ? "text-cyan-400"
+                                        : "text-blue-500"
+                                    }`}
+                            />
                         </div>
 
                         <div className="text-left">
 
-                            <p className="text-slate-400 text-xs">
-
+                            <p
+                                className={`text-xs ${isDark
+                                        ? "text-slate-400"
+                                        : "text-slate-500"
+                                    }`}
+                            >
                                 Current Location
-
                             </p>
 
-                            <p className="text-white font-semibold">
+                            <p
+                                className={`font-semibold ${isDark
+                                        ? "text-white"
+                                        : "text-slate-800"
+                                    }`}
+                            >
                                 {weather
                                     ? `${weather.city}, ${weather.country}`
                                     : "Current Location"}
@@ -200,27 +268,30 @@ function Header() {
 
                 </button>
 
-                {/* Theme */}
+                {/* Theme Toggle */}
 
                 <button
                     onClick={toggleTheme}
-                    className="
-        w-16
-        h-16
-        rounded-3xl
-        bg-slate-900/90
-        border
-        border-white/10
-        backdrop-blur-xl
-        flex
-        items-center
-        justify-center
-        hover:scale-105
-        transition-all
-        duration-300
-    "
+                    className={`
+                        w-16
+                        h-16
+                        rounded-3xl
+                        backdrop-blur-xl
+                        border
+                        flex
+                        items-center
+                        justify-center
+                        hover:scale-105
+                        transition-all
+                        duration-300
+
+                        ${isDark
+                            ? "bg-slate-900/90 border-white/10"
+                            : "bg-gradient-to-br from-pink-100 via-white to-blue-100 border-pink-200 shadow-md"
+                        }
+                    `}
                 >
-                    {theme === "dark" ? (
+                    {isDark ? (
                         <FaSun className="text-yellow-400 text-xl" />
                     ) : (
                         <FaMoon className="text-violet-500 text-xl" />
@@ -230,7 +301,6 @@ function Header() {
             </div>
 
         </header>
-
     );
 }
 
