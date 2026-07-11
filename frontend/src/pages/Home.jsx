@@ -1,12 +1,13 @@
 import { useContext } from "react";
 
 import Header from "../layout/Header";
+import Sidebar from "../layout/Sidebar";
+
 import SearchBar from "../components/SearchBar";
 import CurrentWeather from "../components/CurrentWeather";
 import PredictionCard from "../components/PredictionCard";
 import WeatherStats from "../components/WeatherStats";
 import Forecast from "../components/Forecast";
-import Sidebar from "../layout/Sidebar";
 
 import { WeatherContext } from "../context/WeatherContext";
 
@@ -17,22 +18,29 @@ function Home() {
     return (
 
         <div
-            className={`min-h-screen flex transition-all duration-500 ${
-                theme === "dark"
+            className={`min-h-screen flex transition-all duration-500 ${theme === "dark"
                     ? "bg-[#0F172A] text-white"
                     : "bg-gradient-to-br from-pink-50 via-white to-blue-100 text-slate-800"
-            }`}
+                }`}
         >
+
+            {/* Sidebar */}
 
             <Sidebar />
 
-            <main className="flex-1 p-8">
+            {/* Main Content */}
+
+            <main className="flex-1 w-full p-4 sm:p-6 lg:p-8 overflow-x-hidden">
 
                 <Header />
 
-                <SearchBar />
+                <div className="mt-6">
+                    <SearchBar />
+                </div>
 
-                <div className="grid grid-cols-2 gap-8 mt-8">
+                {/* Weather Cards */}
+
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 lg:gap-8 mt-8">
 
                     <CurrentWeather />
 
@@ -40,9 +48,13 @@ function Home() {
 
                 </div>
 
-                <WeatherStats />
+                <div className="mt-8">
+                    <WeatherStats />
+                </div>
 
-                <Forecast />
+                <div className="mt-8 pb-8">
+                    <Forecast />
+                </div>
 
             </main>
 
