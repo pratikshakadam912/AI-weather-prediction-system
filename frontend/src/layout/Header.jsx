@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { FaLocationCrosshairs, FaMoon, FaSun, FaClock } from "react-icons/fa6";
 
 import { WeatherContext } from "../context/WeatherContext";
-import { getWeatherByLocation } from "../api/weatherApi";
+import { getWeatherByLocation } from "../api/WeatherApi";
 
 function Header() {
   const today = new Date();

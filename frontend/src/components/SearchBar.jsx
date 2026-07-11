@@ -2,54 +2,39 @@ import { useContext, useState } from "react";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
 import { WeatherContext } from "../context/WeatherContext";
-import { getWeather } from "../api/weatherApi";
+import { getWeather } from "../api/WeatherApi";
 
 function SearchBar() {
+  const [city, setCity] = useState("");
 
-    const [city, setCity] = useState("");
+  const { setWeather, loading, setLoading, theme } = useContext(WeatherContext);
 
-    const {
-        setWeather,
-        loading,
-        setLoading,
-        theme,
-    } = useContext(WeatherContext);
+  const isDark = theme === "dark";
 
-    const isDark = theme === "dark";
+  const handleSearch = async () => {
+    if (!city.trim()) return;
 
-    const handleSearch = async () => {
+    try {
+      setLoading(true);
 
-        if (!city.trim()) return;
+      const data = await getWeather(city);
 
-        try {
+      setWeather(data);
 
-            setLoading(true);
+      setCity("");
+    } catch (error) {
+      console.error(error);
 
-            const data = await getWeather(city);
+      alert("City not found");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            setWeather(data);
-
-            setCity("");
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert("City not found");
-
-        } finally {
-
-            setLoading(false);
-
-        }
-    };
-
-    return (
-
-        <div className="flex items-center gap-4">
-
-            <div
-                className={`
+  return (
+    <div className="flex items-center gap-4">
+      <div
+        className={`
                     flex
                     flex-1
                     items-center
@@ -59,49 +44,46 @@ function SearchBar() {
                     transition-all
                     duration-500
 
-                    ${isDark
+                    ${
+                      isDark
                         ? "bg-slate-900 border border-slate-800"
                         : "bg-white border border-pink-100 shadow-md"
                     }
                 `}
-            >
+      >
+        <FaMagnifyingGlass
+          className={`${isDark ? "text-slate-400" : "text-pink-500"}`}
+        />
 
-                <FaMagnifyingGlass
-                    className={`${isDark
-                            ? "text-slate-400"
-                            : "text-pink-500"
-                        }`}
-                />
-
-                <input
-                    type="text"
-                    placeholder="Search city..."
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            handleSearch();
-                        }
-                    }}
-                    className={`
+        <input
+          type="text"
+          placeholder="Search city..."
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
+          className={`
                         flex-1
                         bg-transparent
                         outline-none
                         ml-4
 
-                        ${isDark
+                        ${
+                          isDark
                             ? "text-white placeholder:text-slate-500"
                             : "text-slate-800 placeholder:text-slate-400"
                         }
                     `}
-                />
+        />
+      </div>
 
-            </div>
-
-            <button
-                onClick={handleSearch}
-                disabled={loading}
-                className={`
+      <button
+        onClick={handleSearch}
+        disabled={loading}
+        className={`
                     px-7
                     py-4
                     rounded-2xl
@@ -111,18 +93,17 @@ function SearchBar() {
                     duration-300
                     disabled:opacity-50
 
-                    ${isDark
+                    ${
+                      isDark
                         ? "bg-cyan-500 hover:bg-cyan-600"
                         : "bg-gradient-to-r from-pink-500 via-sky-500 to-blue-500 hover:scale-105 shadow-lg"
                     }
                 `}
-            >
-                {loading ? "Loading..." : "Search"}
-            </button>
-
-        </div>
-
-    );
+      >
+        {loading ? "Loading..." : "Search"}
+      </button>
+    </div>
+  );
 }
 
 export default SearchBar;
