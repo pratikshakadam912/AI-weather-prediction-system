@@ -87,31 +87,21 @@ function Header() {
     >
       {/* Theme Button */}
 
+      {/* Mobile & Tablet */}
       <button
         onClick={toggleTheme}
         className={`
-    absolute
-    top-5
-    right-5
+    absolute top-5 right-5
+    xl:hidden
 
-    xl:static
-
-    w-12
-    h-12
-    lg:w-14
-    lg:h-14
-    xl:w-16
-    xl:h-16
+    w-12 h-12
+    lg:w-14 lg:h-14
 
     rounded-2xl
     border
     backdrop-blur-xl
-    flex
-    items-center
-    justify-center
-    transition-all
-    duration-300
-    hover:scale-105
+    flex items-center justify-center
+    transition-all duration-300
 
     ${
       isDark
@@ -341,6 +331,37 @@ function Header() {
         </button>
 
         {/* Theme */}
+        {/* Desktop Theme Button */}
+        <button
+          onClick={toggleTheme}
+          className={`
+    hidden xl:flex
+
+    w-16
+    h-16
+    rounded-2xl
+    border
+    backdrop-blur-xl
+    items-center
+    justify-center
+    transition-all
+    duration-300
+    hover:scale-105
+    self-center
+
+    ${
+      isDark
+        ? "bg-slate-900/90 border-white/10"
+        : "bg-gradient-to-br from-pink-100 via-white to-blue-100 border-pink-200 shadow-md"
+    }
+  `}
+        >
+          {isDark ? (
+            <FaSun className="text-yellow-400 text-xl" />
+          ) : (
+            <FaMoon className="text-violet-500 text-xl" />
+          )}
+        </button>
       </div>
     </header>
   );
