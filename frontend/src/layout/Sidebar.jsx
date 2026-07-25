@@ -159,42 +159,41 @@ function Sidebar() {
         </div>
 
         {/* Navigation */}
+        <SidebarItem
+          icon={<FaHouse />}
+          title="Dashboard"
+          to="/"
+          onClick={() => setOpen(false)}
+        />
 
-        <nav className="flex-1 px-5 space-y-3 overflow-y-auto">
-          <SidebarItem
-            icon={<FaHouse />}
-            title="Dashboard"
-            active
-            onClick={() => setOpen(false)}
-          />
+        <SidebarItem
+          icon={<FaCloudSun />}
+          title="History"
+          to="/history"
+          onClick={() => setOpen(false)}
+        />
 
-          <SidebarItem
-            icon={<FaCloudSun />}
-            title="History"
-            onClick={() => setOpen(false)}
-          />
+        <SidebarItem
+          icon={<FaRobot />}
+          title="AI Prediction"
+          to="/prediction"
+          onClick={() => setOpen(false)}
+        />
 
-          <SidebarItem
-            icon={<FaRobot />}
-            title="AI Prediction"
-            onClick={() => setOpen(false)}
-          />
+        <SidebarItem
+          icon={<FaChartLine />}
+          title="Analytics"
+          to="/analytics"
+          onClick={() => setOpen(false)}
+        />
 
-          <SidebarItem
-            icon={<FaChartLine />}
-            title="Analytics"
-            onClick={() => setOpen(false)}
-          />
-
-          <SidebarItem
-            icon={<FaGear />}
-            title="Settings"
-            onClick={() => setOpen(false)}
-          />
-        </nav>
-
-        {/* ================= Current Location ================= */}
-        {/* ================= Current Location ================= */}
+        <SidebarItem
+          icon={<FaGear />}
+          title="Settings"
+          to="/settings"
+          onClick={() => setOpen(false)}
+        />
+        {/*  Current Location  */}
 
         <div className="p-5">
           <div
