@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { WeatherContext } from "../context/WeatherContext";
 
 import {
@@ -157,9 +158,7 @@ function Sidebar() {
           </div>
         </div>
 
-        {/* ================= Navigation ================= */}
-
-        {/* ================= Navigation ================= */}
+        {/* Navigation */}
 
         <nav className="flex-1 px-5 space-y-3 overflow-y-auto">
           <SidebarItem
@@ -316,16 +315,16 @@ sm:h-16
     </>
   );
 }
-
-function SidebarItem({ icon, title, active, onClick }) {
+function SidebarItem({ icon, title, to, onClick }) {
   const { theme } = useContext(WeatherContext);
 
   const isDark = theme === "dark";
 
   return (
-    <button
+    <NavLink
+      to={to}
       onClick={onClick}
-      className={`
+      className={({ isActive }) => `
         group
         relative
         w-full
@@ -339,7 +338,7 @@ function SidebarItem({ icon, title, active, onClick }) {
         duration-300
 
         ${
-          active
+          isActive
             ? isDark
               ? "bg-cyan-500/10 border border-cyan-500/20 text-white"
               : "bg-gradient-to-r from-pink-100 to-blue-100 border border-pink-200 text-slate-800 shadow-sm"
@@ -349,44 +348,36 @@ function SidebarItem({ icon, title, active, onClick }) {
         }
       `}
     >
-      {active && (
-        <div
-          className={`
-            absolute
-            left-0
-            top-3
-            bottom-3
-            w-1
-            rounded-full
+      {({ isActive }) => (
+        <>
+          {isActive && (
+            <div
+              className={`absolute left-0 top-3 bottom-3 w-1 rounded-full ${
+                isDark ? "bg-cyan-400" : "bg-pink-500"
+              }`}
+            />
+          )}
 
-            ${isDark ? "bg-cyan-400" : "bg-pink-500"}
-          `}
-        />
+          <span
+            className={`text-xl ml-2 ${
+              isActive
+                ? isDark
+                  ? "text-cyan-400"
+                  : "text-pink-500"
+                : isDark
+                  ? "group-hover:text-cyan-400"
+                  : "group-hover:text-pink-500"
+            }`}
+          >
+            {icon}
+          </span>
+
+          <span className={`font-medium ${isDark ? "" : "text-slate-700"}`}>
+            {title}
+          </span>
+        </>
       )}
-
-      <span
-        className={`
-          text-xl
-          ml-2
-
-          ${
-            active
-              ? isDark
-                ? "text-cyan-400"
-                : "text-pink-500"
-              : isDark
-                ? "group-hover:text-cyan-400"
-                : "group-hover:text-pink-500"
-          }
-        `}
-      >
-        {icon}
-      </span>
-
-      <span className={`font-medium ${isDark ? "" : "text-slate-700"}`}>
-        {title}
-      </span>
-    </button>
+    </NavLink>
   );
 }
 
