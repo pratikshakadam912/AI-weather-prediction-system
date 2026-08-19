@@ -58,6 +58,9 @@ def get_current_weather_by_location(lat, lon):
 
     response = requests.get(BASE_URL, params=params)
 
+    if response.status_code != 200:
+        return None
+
     data = response.json()
 
     return format_weather(data)
