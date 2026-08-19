@@ -18,26 +18,21 @@ export function WeatherProvider({ children }) {
   return (
     <WeatherContext.Provider
       value={{
-        // Weather
         weather,
         setWeather,
 
-        // Prediction
         prediction,
         setPrediction,
 
-        // Loading
         loading,
         setLoading,
 
         predictionLoading,
         setPredictionLoading,
 
-        // Error
         error,
         setError,
 
-        // Theme
         theme,
         setTheme,
       }}

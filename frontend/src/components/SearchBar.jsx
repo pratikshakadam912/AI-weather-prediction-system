@@ -16,6 +16,7 @@ function SearchBar() {
     loading,
     setLoading,
 
+    predictionLoading,
     setPredictionLoading,
 
     setError,
@@ -26,43 +27,96 @@ function SearchBar() {
   const isDark = theme === "dark";
 
   const handleSearch = async () => {
-    if (!city.trim()) return;
+    const searchedCity = city.trim();
+
+    if (!searchedCity) return;
 
     try {
       setLoading(true);
-
       setPredictionLoading(true);
-
       setError("");
 
-      // Get current weather
-      const weatherData = await getWeather(city);
+      // ==========================================
+      // 1. GET CURRENT WEATHER
+      // ==========================================
+
+      const weatherData = await getWeather(searchedCity);
 
       setWeather(weatherData);
 
-      // Get AI prediction
-      const predictionData = await getPrediction(city);
+      // Save latest weather
+      localStorage.setItem("weather_current", JSON.stringify(weatherData));
+
+      // ==========================================
+      // 2. GET AI PREDICTION
+      // ==========================================
+
+      const predictionData = await getPrediction(searchedCity);
 
       setPrediction(predictionData);
 
+      // Save latest prediction
+      localStorage.setItem(
+        "weather_prediction",
+        JSON.stringify(predictionData),
+      );
+
+      // ==========================================
+      // 3. SAVE SEARCH TO HISTORY
+      // ==========================================
+
+      const historyItem = {
+        id: Date.now(),
+
+        city: weatherData.city,
+        country: weatherData.country,
+
+        temperature: weatherData.temperature,
+        description: weatherData.description,
+
+        time: new Date().toLocaleString(),
+
+        weather: weatherData,
+        prediction: predictionData,
+      };
+
+      // Get previous history
+      let existingHistory = [];
+
+      try {
+        existingHistory =
+          JSON.parse(localStorage.getItem("weather_history")) || [];
+      } catch (error) {
+        console.error("Could not read weather history:", error);
+
+        existingHistory = [];
+      }
+
+      // Add newest search at the beginning
+      const updatedHistory = [historyItem, ...existingHistory];
+
+      // Save history
+      localStorage.setItem("weather_history", JSON.stringify(updatedHistory));
+
+      // Clear input
       setCity("");
     } catch (error) {
-      console.error(error);
+      console.error("Weather search error:", error);
 
       setError("Unable to find weather information for this city.");
 
       setWeather(null);
-
       setPrediction(null);
     } finally {
       setLoading(false);
-
       setPredictionLoading(false);
     }
   };
 
   return (
     <div className="flex items-center gap-4">
+      {/* ================= SEARCH INPUT ================= */}
+
       <div
         className={`
           flex
@@ -110,9 +164,11 @@ function SearchBar() {
         />
       </div>
 
+      {/* ================= SEARCH BUTTON ================= */}
+
       <button
         onClick={handleSearch}
-        disabled={loading || predictionLoading}
+        disabled={loading || predictionLoading || !city.trim()}
         className={`
           px-7
           py-4
@@ -123,6 +179,7 @@ function SearchBar() {
           duration-300
 
           disabled:opacity-50
+          disabled:cursor-not-allowed
 
           ${
             isDark
@@ -131,7 +188,7 @@ function SearchBar() {
           }
         `}
       >
-        {loading ? "Loading..." : "Search"}
+        {loading || predictionLoading ? "Loading..." : "Search"}
       </button>
     </div>
   );
