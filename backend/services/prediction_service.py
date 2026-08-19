@@ -1,12 +1,15 @@
 import os
 import joblib
+import pandas as pd
 
 
 # ==========================================
 # MODEL PATHS
 # ==========================================
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))
+)
 
 RAIN_MODEL_PATH = os.path.join(
     BASE_DIR,
@@ -45,45 +48,31 @@ def predict_weather(weather):
 
 
     # ==========================================
-    # PREPARE FEATURES
+    # PREPARE INPUT
     # ==========================================
 
-    features = [[
-        temperature,
-        humidity,
-        pressure,
-        wind_speed
-    ]]
-
-
-    # ==========================================
-    # 1. RAIN PREDICTION
-    # ==========================================
-
-    rain_prediction = rain_model.predict(
-        features
-    )[0]
-
-
-    # ==========================================
-    # RAIN PROBABILITY
-    # ==========================================
-
-    probabilities = rain_model.predict_proba(
-        features
-    )[0]
-
-    rain_probability = round(
-        probabilities[1] * 100
+    input_data = pd.DataFrame(
+        [[
+            temperature,
+            humidity,
+            pressure,
+            wind_speed
+        ]],
+        columns=[
+            "temperature",
+            "humidity",
+            "pressure",
+            "wind_speed"
+        ]
     )
 
 
     # ==========================================
-    # 2. TEMPERATURE PREDICTION
+    # TEMPERATURE PREDICTION
     # ==========================================
 
     predicted_temperature = temperature_model.predict(
-        features
+        input_data
     )[0]
 
     predicted_temperature = round(
@@ -93,27 +82,61 @@ def predict_weather(weather):
 
 
     # ==========================================
-    # TEMPERATURE CHANGE
+    # RAIN PREDICTION
     # ==========================================
 
-    temperature_change = round(
-        predicted_temperature - temperature,
-        1
+    rain_prediction = rain_model.predict(
+        input_data
+    )[0]
+
+
+    # ==========================================
+    # RAIN PROBABILITY
+    # ==========================================
+
+    if hasattr(rain_model, "predict_proba"):
+
+        probabilities = rain_model.predict_proba(
+            input_data
+        )[0]
+
+        rain_probability = float(
+            probabilities[1] * 100
+        )
+
+    else:
+
+        rain_probability = (
+            100 if rain_prediction == 1 else 0
+        )
+
+
+    rain_probability = round(
+        rain_probability
     )
 
 
     # ==========================================
-    # 3. PREDICT CONDITION
+    # PREDICT CONDITION
     # ==========================================
 
-    if rain_prediction == 1:
+    if rain_probability >= 70:
 
         predicted_condition = "Rain"
 
         recommendation = (
             "Rain is likely tomorrow. "
-            "Carry an umbrella and plan outdoor "
-            "activities accordingly."
+            "Carry an umbrella and plan "
+            "outdoor activities accordingly."
+        )
+
+    elif rain_probability >= 40:
+
+        predicted_condition = "Clouds"
+
+        recommendation = (
+            "Cloudy conditions are likely tomorrow. "
+            "Weather should remain relatively comfortable."
         )
 
     else:
@@ -128,16 +151,42 @@ def predict_weather(weather):
 
 
     # ==========================================
-    # 4. MODEL CONFIDENCE
+    # TEMPERATURE CHANGE
     # ==========================================
 
-    confidence = round(
-        max(probabilities) * 100
+    temperature_change = round(
+        predicted_temperature - temperature,
+        1
     )
 
 
     # ==========================================
-    # FINAL RESULT
+    # MODEL CONFIDENCE
+    # ==========================================
+
+    if hasattr(rain_model, "predict_proba"):
+
+        confidence = max(
+            probabilities
+        ) * 100
+
+    else:
+
+        confidence = 75
+
+
+    confidence = round(
+        float(confidence)
+    )
+
+    confidence = min(
+        max(confidence, 0),
+        100
+    )
+
+
+    # ==========================================
+    # RETURN RESULT
     # ==========================================
 
     return {

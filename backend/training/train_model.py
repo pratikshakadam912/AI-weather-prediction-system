@@ -3,7 +3,7 @@ import joblib
 
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
-from sklearn.metrics import accuracy_score, mean_absolute_error
+from sklearn.metrics import accuracy_score, mean_absolute_error, r2_score
 
 
 # ==========================================
@@ -54,7 +54,9 @@ rain_model = RandomForestClassifier(
     random_state=42
 )
 
-print("\nTraining rain prediction model...")
+print("\n==========================================")
+print("TRAINING RAIN MODEL")
+print("==========================================")
 
 rain_model.fit(X_train, y_train)
 
@@ -65,10 +67,7 @@ rain_accuracy = accuracy_score(
     rain_predictions
 )
 
-print(
-    f"Rain model accuracy: "
-    f"{rain_accuracy * 100:.2f}%"
-)
+print(f"Rain model accuracy: {rain_accuracy * 100:.2f}%")
 
 
 # ==========================================
@@ -89,7 +88,9 @@ temperature_model = RandomForestRegressor(
     random_state=42
 )
 
-print("\nTraining temperature prediction model...")
+print("\n==========================================")
+print("TRAINING TEMPERATURE MODEL")
+print("==========================================")
 
 temperature_model.fit(
     X_train_temp,
@@ -100,15 +101,23 @@ temperature_predictions = temperature_model.predict(
     X_test_temp
 )
 
-temperature_error = mean_absolute_error(
+
+# ==========================================
+# TEMPERATURE EVALUATION
+# ==========================================
+
+temperature_mae = mean_absolute_error(
     y_test_temp,
     temperature_predictions
 )
 
-print(
-    f"Temperature MAE: "
-    f"{temperature_error:.2f}°C"
+temperature_r2 = r2_score(
+    y_test_temp,
+    temperature_predictions
 )
+
+print(f"Temperature MAE: {temperature_mae:.2f}°C")
+print(f"Temperature R²: {temperature_r2:.2f}")
 
 
 # ==========================================
@@ -125,7 +134,9 @@ joblib.dump(
     "training/temperature_model.pkl"
 )
 
-print("\nModels saved successfully!")
+print("\n==========================================")
+print("MODELS SAVED SUCCESSFULLY")
+print("==========================================")
 
 print("→ training/rain_model.pkl")
 print("→ training/temperature_model.pkl")
