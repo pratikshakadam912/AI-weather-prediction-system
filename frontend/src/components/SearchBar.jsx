@@ -80,7 +80,6 @@ function SearchBar() {
         prediction: predictionData,
       };
 
-      // Get previous history
       let existingHistory = [];
 
       try {
@@ -88,15 +87,21 @@ function SearchBar() {
           JSON.parse(localStorage.getItem("weather_history")) || [];
       } catch (error) {
         console.error("Could not read weather history:", error);
-
-        existingHistory = [];
       }
 
-      // Add newest search at the beginning
-      const updatedHistory = [historyItem, ...existingHistory];
+      // Remove previous search of the same city
+      const filteredHistory = existingHistory.filter(
+        (item) => item.city.toLowerCase() !== weatherData.city.toLowerCase(),
+      );
+
+      // Put newest search first
+      const updatedHistory = [historyItem, ...filteredHistory];
+
+      // Keep only latest 20 searches
+      const limitedHistory = updatedHistory.slice(0, 20);
 
       // Save history
-      localStorage.setItem("weather_history", JSON.stringify(updatedHistory));
+      localStorage.setItem("weather_history", JSON.stringify(limitedHistory));
 
       // Clear input
       setCity("");

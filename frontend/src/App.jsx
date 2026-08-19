@@ -4,7 +4,7 @@ import Home from "./pages/Home";
 import Prediction from "./pages/Prediction";
 
 import History from "./components/History";
-// import Analytics from "./components/Analytics";
+import Analytics from "./components/Analytics";
 // import Settings from "./components/Settings";
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
       <Route path="/history" element={<History />} />
 
       {/* Coming next */}
-      {/* <Route path="/analytics" element={<Analytics />} /> */}
+      <Route path="/analytics" element={<Analytics />} />
       {/* <Route path="/settings" element={<Settings />} /> */}
     </Routes>
   );

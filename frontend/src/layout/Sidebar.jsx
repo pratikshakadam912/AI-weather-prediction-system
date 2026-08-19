@@ -7,7 +7,6 @@ import {
   FaHouse,
   FaRobot,
   FaChartLine,
-  FaGear,
   FaLocationDot,
   FaBars,
   FaXmark,
@@ -187,12 +186,6 @@ function Sidebar() {
           onClick={() => setOpen(false)}
         />
 
-        <SidebarItem
-          icon={<FaGear />}
-          title="Settings"
-          to="/settings"
-          onClick={() => setOpen(false)}
-        />
         {/*  Current Location  */}
 
         <div className="p-5">
