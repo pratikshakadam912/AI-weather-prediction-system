@@ -1,85 +1,122 @@
-def predict_weather(weather):
-    """
-    Generate a weather prediction using the current weather data.
+import os
+import joblib
 
-    This service is intentionally isolated so a trained ML model
-    can be plugged in later without changing the frontend.
-    """
+
+# ==========================================
+# LOAD TRAINED ML MODEL
+# ==========================================
+
+MODEL_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "training",
+    "weather_model.pkl"
+)
+
+model = joblib.load(MODEL_PATH)
+
+
+# ==========================================
+# PREDICT WEATHER
+# ==========================================
+
+def predict_weather(weather):
 
     temperature = weather["temperature"]
     humidity = weather["humidity"]
     pressure = weather["pressure"]
     wind_speed = weather["wind_speed"]
-    condition = weather["condition"]
 
-    # Estimate rain probability
-    if condition == "Rain":
-        rain_probability = 85
-    elif condition == "Thunderstorm":
-        rain_probability = 95
-    elif condition == "Clouds":
-        rain_probability = 45
-    elif humidity > 80:
-        rain_probability = 60
-    elif humidity > 65:
-        rain_probability = 35
+    # ==========================================
+    # PREPARE INPUT FOR ML MODEL
+    # ==========================================
+
+    features = [[
+        temperature,
+        humidity,
+        pressure,
+        wind_speed
+    ]]
+
+    # ==========================================
+    # ML PREDICTION
+    # ==========================================
+
+    rain_prediction = model.predict(features)[0]
+
+    # Probability of rain
+    probabilities = model.predict_proba(features)[0]
+
+    rain_probability = round(
+        probabilities[1] * 100
+    )
+
+    # ==========================================
+    # PREDICT CONDITION
+    # ==========================================
+
+    if rain_prediction == 1:
+
+        predicted_condition = "Rain"
+
+        recommendation = (
+            "Rain is likely tomorrow. "
+            "Carry an umbrella and plan outdoor "
+            "activities accordingly."
+        )
+
     else:
-        rain_probability = 10
 
-    # Estimate tomorrow's temperature
-    temperature_change = 0
+        predicted_condition = "Clear"
+
+        recommendation = (
+            "Rain is unlikely tomorrow. "
+            "Weather conditions should remain "
+            "relatively comfortable."
+        )
+
+    # ==========================================
+    # TEMPERATURE PREDICTION
+    # ==========================================
+
+    # Simple ML-assisted temperature estimate
+    #
+    # This part will later be replaced with
+    # a dedicated temperature regression model.
 
     if pressure < 1000:
         temperature_change = -2
+
     elif pressure > 1020:
         temperature_change = 1
-    elif humidity > 80:
-        temperature_change = -1
+
+    else:
+        temperature_change = 0
 
     predicted_temperature = round(
         temperature + temperature_change,
         1
     )
 
-    # Predict condition
-    if rain_probability >= 70:
-        predicted_condition = "Rain"
-        recommendation = (
-            "Rain is likely tomorrow. Carry an umbrella "
-            "and plan outdoor activities accordingly."
-        )
+    # ==========================================
+    # MODEL CONFIDENCE
+    # ==========================================
 
-    elif rain_probability >= 40:
-        predicted_condition = "Clouds"
-        recommendation = (
-            "Cloudy conditions are likely tomorrow. "
-            "Weather should remain relatively comfortable."
-        )
-
-    else:
-        predicted_condition = "Clear"
-        recommendation = (
-            "Mostly clear conditions are expected tomorrow. "
-            "It should be a good day for outdoor activities."
-        )
-
-    # Basic confidence calculation
-    confidence = 75
-
-    if humidity > 75:
-        confidence += 5
-
-    if pressure < 1000 or pressure > 1020:
-        confidence += 5
-
-    confidence = min(confidence, 95)
+    confidence = round(
+        max(probabilities) * 100
+    )
 
     return {
         "predicted_temperature": predicted_temperature,
+
         "predicted_condition": predicted_condition,
+
         "rain_probability": rain_probability,
+
         "confidence": confidence,
+
         "temperature_change": temperature_change,
+
         "recommendation": recommendation,
-        "model": "WeatherAI Prediction Engine"
+
+        "model": "Random Forest Weather Prediction Model"
     }

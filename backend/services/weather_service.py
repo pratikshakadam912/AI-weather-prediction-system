@@ -1,8 +1,13 @@
 import requests
 from config import Config
 
+
 BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
 
+
+# ==========================================
+# FORMAT WEATHER DATA
+# ==========================================
 
 def format_weather(data):
     return {
@@ -28,24 +33,39 @@ def format_weather(data):
         "icon": data["weather"][0]["icon"],
 
         "sunrise": data["sys"]["sunrise"],
-        "sunset": data["sys"]["sunset"]
+        "sunset": data["sys"]["sunset"],
     }
 
+
+# ==========================================
+# GET WEATHER BY CITY
+# ==========================================
 
 def get_current_weather(city):
 
     params = {
         "q": city,
         "appid": Config.OPENWEATHER_API_KEY,
-        "units": "metric"
+        "units": "metric",
     }
 
-    response = requests.get(BASE_URL, params=params)
+    response = requests.get(
+        BASE_URL,
+        params=params,
+        timeout=10,
+    )
+
+    if response.status_code != 200:
+        return None
 
     data = response.json()
 
     return format_weather(data)
 
+
+# ==========================================
+# GET WEATHER BY LOCATION
+# ==========================================
 
 def get_current_weather_by_location(lat, lon):
 
@@ -53,10 +73,14 @@ def get_current_weather_by_location(lat, lon):
         "lat": lat,
         "lon": lon,
         "appid": Config.OPENWEATHER_API_KEY,
-        "units": "metric"
+        "units": "metric",
     }
 
-    response = requests.get(BASE_URL, params=params)
+    response = requests.get(
+        BASE_URL,
+        params=params,
+        timeout=10,
+    )
 
     if response.status_code != 200:
         return None
