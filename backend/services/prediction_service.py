@@ -3,16 +3,33 @@ import joblib
 
 
 # ==========================================
-# LOAD TRAINED ML MODEL
+# MODEL PATHS
 # ==========================================
 
-MODEL_PATH = os.path.join(
-    os.path.dirname(os.path.dirname(__file__)),
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+RAIN_MODEL_PATH = os.path.join(
+    BASE_DIR,
     "training",
-    "weather_model.pkl"
+    "rain_model.pkl"
 )
 
-model = joblib.load(MODEL_PATH)
+TEMPERATURE_MODEL_PATH = os.path.join(
+    BASE_DIR,
+    "training",
+    "temperature_model.pkl"
+)
+
+
+# ==========================================
+# LOAD TRAINED MODELS
+# ==========================================
+
+rain_model = joblib.load(RAIN_MODEL_PATH)
+
+temperature_model = joblib.load(
+    TEMPERATURE_MODEL_PATH
+)
 
 
 # ==========================================
@@ -26,8 +43,9 @@ def predict_weather(weather):
     pressure = weather["pressure"]
     wind_speed = weather["wind_speed"]
 
+
     # ==========================================
-    # PREPARE INPUT FOR ML MODEL
+    # PREPARE FEATURES
     # ==========================================
 
     features = [[
@@ -37,21 +55,55 @@ def predict_weather(weather):
         wind_speed
     ]]
 
+
     # ==========================================
-    # ML PREDICTION
+    # 1. RAIN PREDICTION
     # ==========================================
 
-    rain_prediction = model.predict(features)[0]
+    rain_prediction = rain_model.predict(
+        features
+    )[0]
 
-    # Probability of rain
-    probabilities = model.predict_proba(features)[0]
+
+    # ==========================================
+    # RAIN PROBABILITY
+    # ==========================================
+
+    probabilities = rain_model.predict_proba(
+        features
+    )[0]
 
     rain_probability = round(
         probabilities[1] * 100
     )
 
+
     # ==========================================
-    # PREDICT CONDITION
+    # 2. TEMPERATURE PREDICTION
+    # ==========================================
+
+    predicted_temperature = temperature_model.predict(
+        features
+    )[0]
+
+    predicted_temperature = round(
+        float(predicted_temperature),
+        1
+    )
+
+
+    # ==========================================
+    # TEMPERATURE CHANGE
+    # ==========================================
+
+    temperature_change = round(
+        predicted_temperature - temperature,
+        1
+    )
+
+
+    # ==========================================
+    # 3. PREDICT CONDITION
     # ==========================================
 
     if rain_prediction == 1:
@@ -74,49 +126,40 @@ def predict_weather(weather):
             "relatively comfortable."
         )
 
-    # ==========================================
-    # TEMPERATURE PREDICTION
-    # ==========================================
-
-    # Simple ML-assisted temperature estimate
-    #
-    # This part will later be replaced with
-    # a dedicated temperature regression model.
-
-    if pressure < 1000:
-        temperature_change = -2
-
-    elif pressure > 1020:
-        temperature_change = 1
-
-    else:
-        temperature_change = 0
-
-    predicted_temperature = round(
-        temperature + temperature_change,
-        1
-    )
 
     # ==========================================
-    # MODEL CONFIDENCE
+    # 4. MODEL CONFIDENCE
     # ==========================================
 
     confidence = round(
         max(probabilities) * 100
     )
 
+
+    # ==========================================
+    # FINAL RESULT
+    # ==========================================
+
     return {
-        "predicted_temperature": predicted_temperature,
 
-        "predicted_condition": predicted_condition,
+        "predicted_temperature":
+            predicted_temperature,
 
-        "rain_probability": rain_probability,
+        "predicted_condition":
+            predicted_condition,
 
-        "confidence": confidence,
+        "rain_probability":
+            rain_probability,
 
-        "temperature_change": temperature_change,
+        "confidence":
+            confidence,
 
-        "recommendation": recommendation,
+        "temperature_change":
+            temperature_change,
 
-        "model": "Random Forest Weather Prediction Model"
+        "recommendation":
+            recommendation,
+
+        "model":
+            "WeatherAI Random Forest ML"
     }
