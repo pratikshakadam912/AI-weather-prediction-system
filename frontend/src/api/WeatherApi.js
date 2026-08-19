@@ -6,10 +6,18 @@ const API = axios.create({
 
 export const getWeather = async (city) => {
   const response = await API.get(`/weather/${city}`);
+
   return response.data;
 };
 
 export const getWeatherByLocation = async (lat, lon) => {
   const response = await API.get(`/weather/location/${lat}/${lon}`);
+
+  return response.data;
+};
+
+export const getPrediction = async (city) => {
+  const response = await API.get(`/prediction/${city}`);
+
   return response.data;
 };

@@ -3,25 +3,46 @@ import { createContext, useState } from "react";
 export const WeatherContext = createContext();
 
 export function WeatherProvider({ children }) {
-    const [weather, setWeather] = useState(null);
-    const [loading, setLoading] = useState(false);
+  const [weather, setWeather] = useState(null);
 
-    // NEW
-    const [theme, setTheme] = useState("dark");
+  const [prediction, setPrediction] = useState(null);
 
-    return (
-        <WeatherContext.Provider
-            value={{
-                weather,
-                setWeather,
-                loading,
-                setLoading,
+  const [loading, setLoading] = useState(false);
 
-                theme,
-                setTheme,
-            }}
-        >
-            {children}
-        </WeatherContext.Provider>
-    );
+  const [predictionLoading, setPredictionLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+  const [theme, setTheme] = useState("dark");
+
+  return (
+    <WeatherContext.Provider
+      value={{
+        // Weather
+        weather,
+        setWeather,
+
+        // Prediction
+        prediction,
+        setPrediction,
+
+        // Loading
+        loading,
+        setLoading,
+
+        predictionLoading,
+        setPredictionLoading,
+
+        // Error
+        error,
+        setError,
+
+        // Theme
+        theme,
+        setTheme,
+      }}
+    >
+      {children}
+    </WeatherContext.Provider>
+  );
 }
