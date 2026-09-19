@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint
 
 from services.weather_service import get_current_weather
 from services.prediction_service import predict_weather
