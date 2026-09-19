@@ -22,8 +22,15 @@ function Header() {
 
   const hour = today.getHours();
 
-  const { weather, setWeather, loading, setLoading, theme, setTheme } =
-    useContext(WeatherContext);
+  const {
+    weather,
+    setWeather,
+    loading,
+    setLoading,
+    theme,
+    setTheme,
+    setLocation,
+  } = useContext(WeatherContext);
 
   const [locationLoading, setLocationLoading] = useState(false);
 
@@ -65,6 +72,20 @@ function Header() {
             accuracy,
           });
 
+          // =========================
+          // Save exact GPS coordinates
+          // =========================
+
+          setLocation({
+            lat: latitude,
+            lon: longitude,
+            accuracy,
+          });
+
+          // =========================
+          // Get current weather
+          // =========================
+
           const data = await getWeatherByLocation(latitude, longitude);
 
           if (!data) {
@@ -74,6 +95,9 @@ function Header() {
           setWeather(data);
         } catch (error) {
           console.error("Weather fetch error:", error);
+
+          // Clear saved location if request failed
+          setLocation(null);
 
           alert("Unable to fetch weather for your current location.");
         } finally {
@@ -111,7 +135,7 @@ function Header() {
       },
 
       {
-        // Ask the browser/device for the most accurate
+        // Ask browser/device for the most accurate
         // location available.
         enableHighAccuracy: true,
 

@@ -14,6 +14,12 @@ export function WeatherProvider({ children }) {
   const [theme, setTheme] = useState("dark");
 
   // =========================
+  // Location Coordinates
+  // =========================
+
+  const [location, setLocation] = useState(null);
+
+  // =========================
   // Search History
   // =========================
 
@@ -28,7 +34,10 @@ export function WeatherProvider({ children }) {
     }
   });
 
-  // Save history whenever it changes
+  // =========================
+  // Save History
+  // =========================
+
   useEffect(() => {
     localStorage.setItem("weatherHistory", JSON.stringify(history));
   }, [history]);
@@ -84,12 +93,10 @@ export function WeatherProvider({ children }) {
     };
 
     setHistory((previousHistory) => {
-      // Remove an older search for the same city
       const filteredHistory = previousHistory.filter(
         (item) => item.city.toLowerCase() !== weatherData.city.toLowerCase(),
       );
 
-      // Newest search appears first
       return [newSearch, ...filteredHistory].slice(0, 30);
     });
   };
@@ -132,6 +139,10 @@ export function WeatherProvider({ children }) {
 
         theme,
         setTheme,
+
+        // Location
+        location,
+        setLocation,
 
         history,
         addToHistory,
