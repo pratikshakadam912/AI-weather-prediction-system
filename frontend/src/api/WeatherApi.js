@@ -21,3 +21,9 @@ export const getPrediction = async (city) => {
 
   return response.data;
 };
+
+export const getForecastByLocation = async (lat, lon) => {
+  const response = await API.get(`/forecast/location/${lat}/${lon}`);
+
+  return response.data;
+};

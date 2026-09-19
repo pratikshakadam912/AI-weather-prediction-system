@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { FaLocationCrosshairs, FaMoon, FaSun, FaClock } from "react-icons/fa6";
 
@@ -25,59 +25,131 @@ function Header() {
   const { weather, setWeather, loading, setLoading, theme, setTheme } =
     useContext(WeatherContext);
 
+  const [locationLoading, setLocationLoading] = useState(false);
+
   const isDark = theme === "dark";
+
+  // =========================
+  // Theme
+  // =========================
 
   const toggleTheme = () => {
     setTheme(isDark ? "light" : "dark");
   };
 
+  // =========================
+  // Current Location
+  // =========================
+
   const handleCurrentLocation = () => {
     if (!navigator.geolocation) {
-      alert("Geolocation is not supported.");
+      alert("Geolocation is not supported by your browser.");
       return;
     }
+
+    if (locationLoading || loading) {
+      return;
+    }
+
+    setLocationLoading(true);
+    setLoading(true);
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
-          setLoading(true);
+          const { latitude, longitude, accuracy } = position.coords;
 
-          const { latitude, longitude } = position.coords;
+          console.log("Current location:", {
+            latitude,
+            longitude,
+            accuracy,
+          });
 
           const data = await getWeatherByLocation(latitude, longitude);
 
+          if (!data) {
+            throw new Error("No weather data received.");
+          }
+
           setWeather(data);
         } catch (error) {
-          console.error(error);
-          alert("Unable to fetch current location.");
+          console.error("Weather fetch error:", error);
+
+          alert("Unable to fetch weather for your current location.");
         } finally {
+          setLocationLoading(false);
           setLoading(false);
         }
       },
-      () => {
-        alert("Location permission denied.");
+
+      (error) => {
+        console.error("Geolocation error:", error);
+
+        setLocationLoading(false);
+        setLoading(false);
+
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert(
+              "Location permission was denied. Please allow location access in your browser.",
+            );
+            break;
+
+          case error.POSITION_UNAVAILABLE:
+            alert(
+              "Your current location could not be determined. Please try again.",
+            );
+            break;
+
+          case error.TIMEOUT:
+            alert("Location detection took too long. Please try again.");
+            break;
+
+          default:
+            alert("Unable to detect your current location.");
+        }
+      },
+
+      {
+        // Ask the browser/device for the most accurate
+        // location available.
+        enableHighAccuracy: true,
+
+        // Don't wait forever for GPS/location.
+        timeout: 15000,
+
+        // Always request a fresh location.
+        maximumAge: 0,
       },
     );
   };
 
+  // =========================
+  // Greeting
+  // =========================
+
   let greeting = "Good Morning";
 
-  if (hour >= 12 && hour < 17) greeting = "Good Afternoon";
-  else if (hour >= 17) greeting = "Good Evening";
+  if (hour >= 12 && hour < 17) {
+    greeting = "Good Afternoon";
+  } else if (hour >= 17) {
+    greeting = "Good Evening";
+  }
 
   return (
     <header
       className={`
         relative
-    flex
-    flex-col
-    xl:flex-row
-    xl:items-center
-    justify-between
-    gap-8
-    mb-10
-    transition-all
-    duration-500
+        flex
+        flex-col
+        xl:flex-row
+        xl:items-center
+        justify-between
+        gap-8
+        mb-10
+        transition-all
+        duration-500
+
         ${
           isDark
             ? ""
@@ -85,30 +157,38 @@ function Header() {
         }
       `}
     >
-      {/* Theme Button */}
+      {/* =========================
+          Mobile & Tablet Theme
+      ========================= */}
 
-      {/* Mobile & Tablet */}
       <button
         onClick={toggleTheme}
         className={`
-    absolute top-5 right-5
-    xl:hidden
+          absolute
+          top-5
+          right-5
+          xl:hidden
 
-    w-12 h-12
-    lg:w-14 lg:h-14
+          w-12
+          h-12
+          lg:w-14
+          lg:h-14
 
-    rounded-2xl
-    border
-    backdrop-blur-xl
-    flex items-center justify-center
-    transition-all duration-300
+          rounded-2xl
+          border
+          backdrop-blur-xl
+          flex
+          items-center
+          justify-center
+          transition-all
+          duration-300
 
-    ${
-      isDark
-        ? "bg-slate-900/90 border-white/10"
-        : "bg-gradient-to-br from-pink-100 via-white to-blue-100 border-pink-200 shadow-md"
-    }
-  `}
+          ${
+            isDark
+              ? "bg-slate-900/90 border-white/10"
+              : "bg-gradient-to-br from-pink-100 via-white to-blue-100 border-pink-200 shadow-md"
+          }
+        `}
       >
         {isDark ? (
           <FaSun className="text-yellow-400 text-xl" />
@@ -116,7 +196,10 @@ function Header() {
           <FaMoon className="text-violet-500 text-xl" />
         )}
       </button>
-      {/* Left */}
+
+      {/* =========================
+          Left Content
+      ========================= */}
 
       <div className="flex-1">
         <div
@@ -129,6 +212,7 @@ function Header() {
             py-2
             rounded-full
             border
+
             ${
               isDark
                 ? "bg-cyan-500/10 border-cyan-500/20"
@@ -137,15 +221,23 @@ function Header() {
           `}
         >
           <span
-            className={`w-2 h-2 rounded-full animate-pulse ${
-              isDark ? "bg-cyan-400" : "bg-pink-500"
-            }`}
+            className={`
+              w-2
+              h-2
+              rounded-full
+              animate-pulse
+
+              ${isDark ? "bg-cyan-400" : "bg-pink-500"}
+            `}
           />
 
           <span
-            className={`text-sm font-medium ${
-              isDark ? "text-cyan-300" : "text-pink-600"
-            }`}
+            className={`
+              text-sm
+              font-medium
+
+              ${isDark ? "text-cyan-300" : "text-pink-600"}
+            `}
           >
             AI Weather Assistant
           </span>
@@ -159,6 +251,7 @@ function Header() {
             text-3xl
             sm:text-4xl
             lg:text-5xl
+
             ${isDark ? "text-white" : "text-slate-800"}
           `}
         >
@@ -172,6 +265,7 @@ function Header() {
             text-2xl
             sm:text-3xl
             lg:text-4xl
+
             ${isDark ? "text-slate-200" : "text-slate-700"}
           `}
         >
@@ -185,6 +279,7 @@ function Header() {
             sm:text-base
             lg:text-lg
             max-w-xl
+
             ${isDark ? "text-slate-400" : "text-slate-500"}
           `}
         >
@@ -192,7 +287,9 @@ function Header() {
         </p>
       </div>
 
-      {/* Right */}
+      {/* =========================
+          Right Content
+      ========================= */}
 
       <div
         className="
@@ -207,7 +304,9 @@ function Header() {
           xl:w-auto
         "
       >
-        {/* Date */}
+        {/* =========================
+            Date
+        ========================= */}
 
         <div
           className={`
@@ -265,11 +364,14 @@ function Header() {
             </p>
           </div>
         </div>
-        {/* Location */}
+
+        {/* =========================
+            Current Location
+        ========================= */}
 
         <button
           onClick={handleCurrentLocation}
-          disabled={loading}
+          disabled={locationLoading || loading}
           className={`
             flex
             items-center
@@ -283,7 +385,9 @@ function Header() {
             xl:min-w-[270px]
             transition-all
             duration-300
-            disabled:opacity-50
+
+            disabled:opacity-60
+            disabled:cursor-not-allowed
 
             ${
               isDark
@@ -301,11 +405,16 @@ function Header() {
               items-center
               justify-center
               flex-shrink-0
+
               ${isDark ? "bg-cyan-500/15" : "bg-blue-100"}
             `}
           >
             <FaLocationCrosshairs
-              className={isDark ? "text-cyan-400" : "text-blue-500"}
+              className={`
+                ${isDark ? "text-cyan-400" : "text-blue-500"}
+
+                ${locationLoading ? "animate-spin" : ""}
+              `}
             />
           </div>
 
@@ -323,38 +432,43 @@ function Header() {
                 isDark ? "text-white" : "text-slate-800"
               }`}
             >
-              {weather
-                ? `${weather.city}, ${weather.country}`
-                : "Current Location"}
+              {locationLoading
+                ? "Detecting location..."
+                : weather
+                  ? `${weather.city}, ${weather.country}`
+                  : "Use my location"}
             </p>
           </div>
         </button>
 
-        {/* Theme */}
-        {/* Desktop Theme Button */}
+        {/* =========================
+            Desktop Theme
+        ========================= */}
+
         <button
           onClick={toggleTheme}
           className={`
-    hidden xl:flex
+            hidden
+            xl:flex
 
-    w-16
-    h-16
-    rounded-2xl
-    border
-    backdrop-blur-xl
-    items-center
-    justify-center
-    transition-all
-    duration-300
-    hover:scale-105
-    self-center
+            w-16
+            h-16
+            rounded-2xl
+            border
+            backdrop-blur-xl
+            items-center
+            justify-center
+            transition-all
+            duration-300
+            hover:scale-105
+            self-center
 
-    ${
-      isDark
-        ? "bg-slate-900/90 border-white/10"
-        : "bg-gradient-to-br from-pink-100 via-white to-blue-100 border-pink-200 shadow-md"
-    }
-  `}
+            ${
+              isDark
+                ? "bg-slate-900/90 border-white/10"
+                : "bg-gradient-to-br from-pink-100 via-white to-blue-100 border-pink-200 shadow-md"
+            }
+          `}
         >
           {isDark ? (
             <FaSun className="text-yellow-400 text-xl" />
