@@ -23,7 +23,9 @@ function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* =========================
+          Mobile Menu Button
+      ========================= */}
 
       <button
         onClick={() => setOpen(true)}
@@ -52,7 +54,9 @@ function Sidebar() {
         <FaBars />
       </button>
 
-      {/* Overlay */}
+      {/* =========================
+          Mobile Overlay
+      ========================= */}
 
       {open && (
         <div
@@ -61,7 +65,9 @@ function Sidebar() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* =========================
+          Sidebar
+      ========================= */}
 
       <aside
         className={`
@@ -91,7 +97,9 @@ function Sidebar() {
           }
         `}
       >
-        {/* Close Button */}
+        {/* =========================
+            Close Button
+        ========================= */}
 
         <button
           onClick={() => setOpen(false)}
@@ -113,7 +121,9 @@ function Sidebar() {
           <FaXmark />
         </button>
 
-        {/* Logo */}
+        {/* =========================
+            Logo
+        ========================= */}
 
         <div className="px-8 pt-8 pb-6">
           <div className="flex items-center gap-4">
@@ -157,7 +167,10 @@ function Sidebar() {
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* =========================
+            Navigation
+        ========================= */}
+
         <SidebarItem
           icon={<FaHouse />}
           title="Dashboard"
@@ -186,127 +199,194 @@ function Sidebar() {
           onClick={() => setOpen(false)}
         />
 
-        {/*  Current Location  */}
+        {/* =========================
+            Current Location
+        ========================= */}
 
         <div className="p-5">
           <div
             className={`
-                        rounded-3xl
-                        backdrop-blur-xl
-                        p-5
-                        transition-all
-                        duration-500
+              rounded-3xl
+              backdrop-blur-xl
+              p-5
+              transition-all
+              duration-500
 
-                        ${
-                          isDark
-                            ? "bg-slate-900/80 border border-white/10"
-                            : "bg-white/80 border border-blue-100 shadow-md"
-                        }
-                    `}
+              ${
+                isDark
+                  ? "bg-slate-900/80 border border-white/10"
+                  : "bg-white/80 border border-blue-100 shadow-md"
+              }
+            `}
           >
-            <div className="flex items-center gap-3">
-              <div
-                className={`
-                                w-12
-                                h-12
-                                rounded-2xl
-                                flex
-                                items-center
-                                justify-center
+            {weather ? (
+              <>
+                {/* =========================
+                    Selected City
+                ========================= */}
 
-                                ${isDark ? "bg-cyan-500/15" : "bg-blue-100"}
-                            `}
-              >
-                <FaLocationDot
-                  className={`text-lg ${
-                    isDark ? "text-cyan-400" : "text-blue-500"
-                  }`}
-                />
-              </div>
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`
+                      w-12
+                      h-12
+                      rounded-2xl
+                      flex
+                      items-center
+                      justify-center
 
-              <div className="min-w-0">
+                      ${isDark ? "bg-cyan-500/15" : "bg-blue-100"}
+                    `}
+                  >
+                    <FaLocationDot
+                      className={`text-lg ${
+                        isDark ? "text-cyan-400" : "text-blue-500"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="min-w-0">
+                    <p
+                      className={`text-xs uppercase tracking-wider ${
+                        isDark ? "text-slate-400" : "text-slate-500"
+                      }`}
+                    >
+                      Current City
+                    </p>
+
+                    <h3
+                      className={`font-semibold text-lg truncate ${
+                        isDark ? "text-white" : "text-slate-800"
+                      }`}
+                    >
+                      {weather.city}
+                    </h3>
+                  </div>
+                </div>
+
+                {/* =========================
+                    Weather Information
+                ========================= */}
+
+                <div
+                  className={`
+                    mt-5
+                    pt-5
+                    flex
+                    items-center
+                    justify-between
+
+                    ${
+                      isDark
+                        ? "border-t border-white/10"
+                        : "border-t border-slate-200"
+                    }
+                  `}
+                >
+                  <div>
+                    <p
+                      className={`text-4xl font-bold ${
+                        isDark ? "text-white" : "text-slate-800"
+                      }`}
+                    >
+                      {weather.temperature}°
+                    </p>
+
+                    <p
+                      className={`text-sm mt-1 capitalize ${
+                        isDark ? "text-slate-400" : "text-slate-500"
+                      }`}
+                    >
+                      {weather.description}
+                    </p>
+                  </div>
+
+                  <div
+                    className={`
+                      w-14
+                      h-14
+                      sm:w-16
+                      sm:h-16
+                      rounded-2xl
+                      flex
+                      items-center
+                      justify-center
+
+                      ${isDark ? "bg-yellow-400/10" : "bg-yellow-100"}
+                    `}
+                  >
+                    <WiDaySunny className="text-yellow-400 text-4xl sm:text-5xl" />
+                  </div>
+                </div>
+              </>
+            ) : (
+              /* =========================
+                  No City Selected
+              ========================= */
+
+              <div className="text-center py-4">
+                <div
+                  className={`
+                    w-14
+                    h-14
+                    mx-auto
+                    rounded-2xl
+                    flex
+                    items-center
+                    justify-center
+
+                    ${isDark ? "bg-cyan-500/10" : "bg-blue-100"}
+                  `}
+                >
+                  <FaLocationDot
+                    className={`text-xl ${
+                      isDark ? "text-cyan-400" : "text-blue-500"
+                    }`}
+                  />
+                </div>
+
                 <p
-                  className={`text-xs uppercase tracking-wider ${
+                  className={`text-xs uppercase tracking-wider mt-4 ${
                     isDark ? "text-slate-400" : "text-slate-500"
                   }`}
                 >
                   Current City
                 </p>
 
-                <h3
-                  className={`font-semibold text-lg truncate ${
-                    isDark ? "text-white" : "text-slate-800"
-                  }`}
-                >
-                  {weather ? weather.city : "Pune"}
-                </h3>
-              </div>
-            </div>
-
-            <div
-              className={`
-                            mt-5
-                            pt-5
-                            flex
-                            items-center
-                            justify-between
-
-                            ${
-                              isDark
-                                ? "border-t border-white/10"
-                                : "border-t border-slate-200"
-                            }
-                        `}
-            >
-              <div>
                 <p
-                  className={`text-4xl font-bold ${
-                    isDark ? "text-white" : "text-slate-800"
+                  className={`text-sm mt-2 ${
+                    isDark ? "text-slate-500" : "text-slate-500"
                   }`}
                 >
-                  {weather ? `${weather.temperature}°` : "31°"}
-                </p>
-
-                <p
-                  className={`text-sm mt-1 capitalize ${
-                    isDark ? "text-slate-400" : "text-slate-500"
-                  }`}
-                >
-                  {weather ? weather.description : "Mostly Sunny"}
+                  Search for a city or use your location
                 </p>
               </div>
-
-              <div
-                className={`
-                               w-14
-h-14
-sm:w-16
-sm:h-16
-                                rounded-2xl
-                                flex
-                                items-center
-                                justify-center
-
-                                ${isDark ? "bg-yellow-400/10" : "bg-yellow-100"}
-                            `}
-              >
-                <WiDaySunny className="text-yellow-400 text-4xl sm:text-5xl" />
-              </div>
-            </div>
+            )}
           </div>
+
+          {/* =========================
+              Sidebar Footer
+          ========================= */}
 
           <p
             className={`text-center text-xs mt-5 ${
               isDark ? "text-slate-600" : "text-slate-500"
             }`}
           >
-            {weather ? `Showing weather for ${weather.city}` : "WeatherAI v1.0"}
+            {weather
+              ? `Showing weather for ${weather.city}`
+              : "No location selected"}
           </p>
         </div>
       </aside>
     </>
   );
 }
+
+/* =========================
+   Sidebar Navigation Item
+========================= */
+
 function SidebarItem({ icon, title, to, onClick }) {
   const { theme } = useContext(WeatherContext);
 
